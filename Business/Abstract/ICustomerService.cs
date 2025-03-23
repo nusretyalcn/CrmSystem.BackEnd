@@ -13,7 +13,7 @@ namespace Business.Abstract
     public interface ICustomerService
     {
         Paginate<Customer> GetListPagedCustomer(CustomerFilterDto customerFilterDto, PageRequestDto pageRequestDto);
-        void Add(CustomerDto customerDto);
+        void Add(Customer customer);
         void Update(Customer customer);
         void Delete(Customer customer);
     }
