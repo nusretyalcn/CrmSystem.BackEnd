@@ -10,6 +10,8 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Core.Utilities.Pagging;
+using Core.Utilities.Validation;
+using Business.ValidationRules;
 
 namespace Business.Concrete
 {
@@ -73,7 +75,7 @@ namespace Business.Concrete
         public void Add(CustomerDto customerDto)
         {
             try
-            {
+            {             
                 var customer = new Customer
                 {
                     FirstName = customerDto.FirstName,
@@ -82,6 +84,8 @@ namespace Business.Concrete
                     Email = customerDto.Email,
                     RegistrationDate = DateTime.UtcNow
                 };
+
+                ValidationTool.Validate(new CustomerValidator(), customer);
 
                 _customerDal.Add(customer);
             }
@@ -97,6 +101,7 @@ namespace Business.Concrete
         {
             try
             {
+                ValidationTool.Validate(new CustomerValidator(), customer);
                 _customerDal.Delete(customer);
             }
             catch (Exception ex)
@@ -111,6 +116,7 @@ namespace Business.Concrete
         {
             try
             {
+                ValidationTool.Validate(new CustomerValidator(), customer);
                 _customerDal.Update(customer);
             }
             catch (Exception ex)
