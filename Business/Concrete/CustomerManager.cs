@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Core.Utilities.Pagging;
 using Core.Utilities.Validation;
 using Business.ValidationRules;
+using Core.Aspects;
 
 namespace Business.Concrete
 {
@@ -71,22 +72,20 @@ namespace Business.Concrete
             }
         }
 
-
-        public void Add(CustomerDto customerDto)
+        [ValidationAspect(typeof(CustomerValidator))]
+        public void Add(Customer customer)
         {
             try
-            {             
-                var customer = new Customer
-                {
-                    FirstName = customerDto.FirstName,
-                    LastName = customerDto.LastName,
-                    Region = customerDto.Region,
-                    Email = customerDto.Email,
-                    RegistrationDate = DateTime.UtcNow
-                };
-
-                ValidationTool.Validate(new CustomerValidator(), customer);
-
+            {
+                //var customer = new Customer
+                //{
+                //    FirstName = customerDto.FirstName,
+                //    LastName = customerDto.LastName,
+                //    Region = customerDto.Region,
+                //    Email = customerDto.Email,
+                //    RegistrationDate = DateTime.UtcNow
+                //};
+                customer.RegistrationDate = DateTime.UtcNow;
                 _customerDal.Add(customer);
             }
             catch (Exception ex)
@@ -97,11 +96,11 @@ namespace Business.Concrete
 
         }
 
+        //[ValidationAspect(typeof(CustomerValidator))]
         public void Delete(Customer customer)
         {
             try
             {
-                ValidationTool.Validate(new CustomerValidator(), customer);
                 _customerDal.Delete(customer);
             }
             catch (Exception ex)
@@ -112,11 +111,11 @@ namespace Business.Concrete
 
         }
 
+       // [ValidationAspect(typeof(CustomerValidator))]
         public void Update(Customer customer)
         {
             try
             {
-                ValidationTool.Validate(new CustomerValidator(), customer);
                 _customerDal.Update(customer);
             }
             catch (Exception ex)
