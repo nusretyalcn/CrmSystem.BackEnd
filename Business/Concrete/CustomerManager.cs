@@ -26,6 +26,7 @@ namespace Business.Concrete
             _customerDal = customerDal;
         }
 
+        [SecuredOperation("admin")]
         public IDataResult<Paginate<Customer>> GetListPagedCustomer(CustomerFilterDto customerFilterDto, PageRequestDto pageRequestDto)
         {
 
@@ -69,6 +70,7 @@ namespace Business.Concrete
         }
 
         [ValidationAspect(typeof(CustomerValidator))]
+        [SecuredOperation("admin")]
         public IResult Add(Customer customer)
         {
 
@@ -79,6 +81,7 @@ namespace Business.Concrete
         }
 
         [ValidationAspect(typeof(CustomerValidator))]
+        [SecuredOperation("admin")]
         public IResult Delete(Customer customer)
         {
 
@@ -87,6 +90,7 @@ namespace Business.Concrete
         }
 
         [ValidationAspect(typeof(CustomerValidator))]
+        [SecuredOperation("admin")]
         public IResult Update(Customer customer)
         {
 
