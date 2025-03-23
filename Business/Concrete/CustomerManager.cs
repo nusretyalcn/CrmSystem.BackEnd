@@ -9,6 +9,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Core.Utilities.Pagging;
 
 namespace Business.Concrete
 {
@@ -21,7 +22,7 @@ namespace Business.Concrete
             _customerDal = customerDal;
         }
 
-        public List<Customer> GetListPagedCustomer(CustomerFilterDto customerFilterDto)
+        public Paginate<Customer> GetListPagedCustomer(CustomerFilterDto customerFilterDto, PageRequestDto pageRequestDto)
         {
 
             Expression<Func<Customer, bool>> predicate = p => true; // Başlangıçta tüm veriyi getir
@@ -51,8 +52,15 @@ namespace Business.Concrete
                     ? c => c.RegistrationDate <= customerFilterDto.EndDate.Value
                     : predicate.And(c => c.RegistrationDate <= customerFilterDto.EndDate.Value);
 
-            var result = _customerDal.GetList(predicate,orderBy:p=>p.OrderByDescending(c=>c.Id),enableTracking:false);
-            return result.ToList();
+
+
+            IQueryable<Customer> query = _customerDal.GetList(
+                predicate: predicate,
+                orderBy: q => q.OrderByDescending(c => c.Id),
+                enableTracking: false);
+
+            return query.ToPaginate(pageRequestDto.PageIndex, pageRequestDto.PageSize);
+
         }
 
 
