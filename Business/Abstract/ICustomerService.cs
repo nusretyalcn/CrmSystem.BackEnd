@@ -1,5 +1,6 @@
 ﻿
 using Core.Utilities.Pagging;
+using Core.Utilities.Results;
 using Entities.Concrete;
 using Entities.DTOs;
 using System;
@@ -12,9 +13,9 @@ namespace Business.Abstract
 {
     public interface ICustomerService
     {
-        Paginate<Customer> GetListPagedCustomer(CustomerFilterDto customerFilterDto, PageRequestDto pageRequestDto);
-        void Add(Customer customer);
-        void Update(Customer customer);
-        void Delete(Customer customer);
+        IDataResult<Paginate<Customer>> GetListPagedCustomer(CustomerFilterDto customerFilterDto, PageRequestDto pageRequestDto);
+        IResult Add(Customer customer);
+        IResult Update(Customer customer);
+        IResult Delete(Customer customer);
     }
 }

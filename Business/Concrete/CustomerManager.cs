@@ -13,6 +13,7 @@ using Core.Utilities.Pagging;
 using Core.Utilities.Validation;
 using Business.ValidationRules;
 using Core.Aspects;
+using Core.Utilities.Results;
 
 namespace Business.Concrete
 {
@@ -25,11 +26,11 @@ namespace Business.Concrete
             _customerDal = customerDal;
         }
 
-        public Paginate<Customer> GetListPagedCustomer(CustomerFilterDto customerFilterDto, PageRequestDto pageRequestDto)
+        public IDataResult<Paginate<Customer>> GetListPagedCustomer(CustomerFilterDto customerFilterDto, PageRequestDto pageRequestDto)
         {
-
             try
             {
+
                 Expression<Func<Customer, bool>> predicate = p => true; // Başlangıçta tüm veriyi getir
 
                 if (!string.IsNullOrEmpty(customerFilterDto.Name))// Name filtresini kontrol ediyor
@@ -63,56 +64,61 @@ namespace Business.Concrete
                     orderBy: q => q.OrderByDescending(c => c.Id),
                     enableTracking: false);
 
-                return query.ToPaginate(pageRequestDto.PageIndex, pageRequestDto.PageSize);
+                var paginatedResult = query.ToPaginate(pageRequestDto.PageIndex, pageRequestDto.PageSize);
 
+                return new SuccessDataResult<Paginate<Customer>>(paginatedResult, "Müşteriler Listelendi");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception("Customers could not be listed.", ex);
+
+                return new ErrorDataResult<Paginate<Customer>>(null, "Müşteriler Listelendi");
             }
         }
 
         [ValidationAspect(typeof(CustomerValidator))]
-        public void Add(Customer customer)
+        public IResult Add(Customer customer)
         {
             try
             {
                 customer.RegistrationDate = DateTime.UtcNow;
                 _customerDal.Add(customer);
+                return new SuccessResult("Müşteri Eklendi");
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to add customer:", ex);
-            }
 
+                return new ErrorResult("Müşteri Eklenemedi");
+            }
         }
 
         [ValidationAspect(typeof(CustomerValidator))]
-        public void Delete(Customer customer)
+        public IResult Delete(Customer customer)
         {
             try
             {
                 _customerDal.Delete(customer);
+                return new SuccessResult("Müşteri silindi");
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to delete customer:", ex);
-            }
 
+                return new ErrorResult("Müşteri silinemedi");
+            }
         }
 
         [ValidationAspect(typeof(CustomerValidator))]
-        public void Update(Customer customer)
+        public IResult Update(Customer customer)
         {
             try
             {
                 _customerDal.Update(customer);
+                return new SuccessResult("Müşteri güncellendi");
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to update customer:", ex);
-            }
 
+                return new ErrorResult("Müşteri güncellenemedi");
+            }
         }
     }
 }
