@@ -25,67 +25,100 @@ namespace Business.Concrete
         public Paginate<Customer> GetListPagedCustomer(CustomerFilterDto customerFilterDto, PageRequestDto pageRequestDto)
         {
 
-            Expression<Func<Customer, bool>> predicate = p => true; // Başlangıçta tüm veriyi getir
+            try
+            {
+                Expression<Func<Customer, bool>> predicate = p => true; // Başlangıçta tüm veriyi getir
 
-            if (!string.IsNullOrEmpty(customerFilterDto.Name))// Name filtresini kontrol ediyor
-                predicate = predicate == null //filtre oluşturulmamışsa oluşturuluyor
-                    ? c => c.FirstName.Contains(customerFilterDto.Name)
-                    : predicate.And(c => c.FirstName.Contains(customerFilterDto.Name));//filtre oluşturulmuşsa mevcut predicate'e yeni koşul ekliyor
+                if (!string.IsNullOrEmpty(customerFilterDto.Name))// Name filtresini kontrol ediyor
+                    predicate = predicate == null //filtre oluşturulmamışsa oluşturuluyor
+                        ? c => c.FirstName.Contains(customerFilterDto.Name)
+                        : predicate.And(c => c.FirstName.Contains(customerFilterDto.Name));//filtre oluşturulmuşsa mevcut predicate'e yeni koşul ekliyor
 
-            if (!string.IsNullOrEmpty(customerFilterDto.Email))
-                predicate = predicate == null
-                    ? c => c.Email.Contains(customerFilterDto.Email)
-                    : predicate.And(c => c.Email.Contains(customerFilterDto.Email));
+                if (!string.IsNullOrEmpty(customerFilterDto.Email))
+                    predicate = predicate == null
+                        ? c => c.Email.Contains(customerFilterDto.Email)
+                        : predicate.And(c => c.Email.Contains(customerFilterDto.Email));
 
-            if (!string.IsNullOrEmpty(customerFilterDto.Region))
-                predicate = predicate == null
-                    ? c => c.Region.Contains(customerFilterDto.Region)
-                    : predicate.And(c => c.Region.Contains(customerFilterDto.Region));
+                if (!string.IsNullOrEmpty(customerFilterDto.Region))
+                    predicate = predicate == null
+                        ? c => c.Region.Contains(customerFilterDto.Region)
+                        : predicate.And(c => c.Region.Contains(customerFilterDto.Region));
 
-            if (customerFilterDto.StartDate.HasValue)
-                predicate = predicate == null
-                    ? c => c.RegistrationDate >= customerFilterDto.StartDate.Value
-                    : predicate.And(c => c.RegistrationDate >= customerFilterDto.StartDate.Value);
+                if (customerFilterDto.StartDate.HasValue)
+                    predicate = predicate == null
+                        ? c => c.RegistrationDate >= customerFilterDto.StartDate.Value
+                        : predicate.And(c => c.RegistrationDate >= customerFilterDto.StartDate.Value);
 
-            if (customerFilterDto.EndDate.HasValue)
-                predicate = predicate == null
-                    ? c => c.RegistrationDate <= customerFilterDto.EndDate.Value
-                    : predicate.And(c => c.RegistrationDate <= customerFilterDto.EndDate.Value);
+                if (customerFilterDto.EndDate.HasValue)
+                    predicate = predicate == null
+                        ? c => c.RegistrationDate <= customerFilterDto.EndDate.Value
+                        : predicate.And(c => c.RegistrationDate <= customerFilterDto.EndDate.Value);
 
 
+                IQueryable<Customer> query = _customerDal.GetList(
+                    predicate: predicate,
+                    orderBy: q => q.OrderByDescending(c => c.Id),
+                    enableTracking: false);
 
-            IQueryable<Customer> query = _customerDal.GetList(
-                predicate: predicate,
-                orderBy: q => q.OrderByDescending(c => c.Id),
-                enableTracking: false);
+                return query.ToPaginate(pageRequestDto.PageIndex, pageRequestDto.PageSize);
 
-            return query.ToPaginate(pageRequestDto.PageIndex, pageRequestDto.PageSize);
-
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Customers could not be listed.", ex);
+            }
         }
 
 
         public void Add(CustomerDto customerDto)
         {
-            var customer = new Customer
+            try
             {
-                FirstName = customerDto.FirstName,
-                LastName = customerDto.LastName,
-                Region = customerDto.Region,
-                Email = customerDto.Email,
-                RegistrationDate = DateTime.UtcNow
-            };
+                var customer = new Customer
+                {
+                    FirstName = customerDto.FirstName,
+                    LastName = customerDto.LastName,
+                    Region = customerDto.Region,
+                    Email = customerDto.Email,
+                    RegistrationDate = DateTime.UtcNow
+                };
 
-            _customerDal.Add(customer);
+                _customerDal.Add(customer);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Failed to add customer:", ex);
+            }
+
         }
 
         public void Delete(Customer customer)
         {
-            _customerDal.Delete(customer);
+            try
+            {
+                _customerDal.Delete(customer);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Failed to delete customer:", ex);
+            }
+
         }
 
         public void Update(Customer customer)
         {
-            _customerDal.Update(customer);
+            try
+            {
+                _customerDal.Update(customer);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Failed to update customer:", ex);
+            }
+
         }
     }
 }
