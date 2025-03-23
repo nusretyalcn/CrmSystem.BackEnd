@@ -21,16 +21,24 @@ namespace WebApi.Controllers
         public IActionResult GetListPagedCustomer([FromQuery] CustomerFilterDto customerFilterDto, [FromQuery] PageRequestDto pageRequestDto)
         {
             var result = _customerService.GetListPagedCustomer(customerFilterDto, pageRequestDto);
-
-            return Ok(result);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+            
         }
 
         [HttpPost("add")]
         public IActionResult Add(Customer customer)
         {
 
-            _customerService.Add(customer);
-            return Ok(new { Message = "Customer successfully added." });
+            var result = _customerService.Add(customer);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
 
         }
 
@@ -38,8 +46,12 @@ namespace WebApi.Controllers
         public IActionResult Update(Customer customer)
         {
 
-            _customerService.Update(customer);
-            return Ok(new { Message = "Customer successfully updated." });
+            var result = _customerService.Update(customer);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
 
         }
 
@@ -47,8 +59,12 @@ namespace WebApi.Controllers
         public IActionResult Delete(Customer customer)
         {
 
-            _customerService.Delete(customer);
-            return Ok(new { Message = "Customer successfully deleted." });
+            var result = _customerService.Delete(customer);
+            if(result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
 
         }
     }
