@@ -77,26 +77,17 @@ namespace Business.Concrete
         {
             try
             {
-                //var customer = new Customer
-                //{
-                //    FirstName = customerDto.FirstName,
-                //    LastName = customerDto.LastName,
-                //    Region = customerDto.Region,
-                //    Email = customerDto.Email,
-                //    RegistrationDate = DateTime.UtcNow
-                //};
                 customer.RegistrationDate = DateTime.UtcNow;
                 _customerDal.Add(customer);
             }
             catch (Exception ex)
             {
-
                 throw new Exception("Failed to add customer:", ex);
             }
 
         }
 
-        //[ValidationAspect(typeof(CustomerValidator))]
+        [ValidationAspect(typeof(CustomerValidator))]
         public void Delete(Customer customer)
         {
             try
@@ -105,13 +96,12 @@ namespace Business.Concrete
             }
             catch (Exception ex)
             {
-
                 throw new Exception("Failed to delete customer:", ex);
             }
 
         }
 
-       // [ValidationAspect(typeof(CustomerValidator))]
+        [ValidationAspect(typeof(CustomerValidator))]
         public void Update(Customer customer)
         {
             try
@@ -120,7 +110,6 @@ namespace Business.Concrete
             }
             catch (Exception ex)
             {
-
                 throw new Exception("Failed to update customer:", ex);
             }
 
