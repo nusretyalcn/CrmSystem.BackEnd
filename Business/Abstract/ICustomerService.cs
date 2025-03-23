@@ -11,7 +11,7 @@ namespace Business.Abstract
 {
     public interface ICustomerService
     {
-        List<Customer> GetListPagedCustomer();
+        List<Customer> GetListPagedCustomer(CustomerFilterDto customerFilterDto);
         void Add(CustomerDto customerDto);
         void Update(Customer customer);
         void Delete(Customer customer);
