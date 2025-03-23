@@ -25,19 +25,20 @@ namespace Business.Concrete
 
         public IResult Add(User user)
         {
+            user.CreatedAt = DateTime.UtcNow;
             _userDal.Add(user);
-            return new SuccessResult();
+            return new SuccessResult("Kullanıcı Eklendi");
         }
 
         public IDataResult<User> GetByEmail(string email)
         {
-            return new SuccessDataResult<User>(_userDal.Get(p => p.Email == email));
+            return new SuccessDataResult<User>(_userDal.Get(p => p.Email == email),"Kullanıcı listelendi");
 
         }
 
         public IDataResult<List<User>> GetAll()
         {
-            return new SuccessDataResult<List<User>>(_userDal.GetList().ToList());
+            return new SuccessDataResult<List<User>>(_userDal.GetList().ToList(),"Kullanıcılar listelendi");
         }
     }
 }

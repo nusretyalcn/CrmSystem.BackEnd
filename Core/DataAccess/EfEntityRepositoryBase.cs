@@ -38,6 +38,16 @@ namespace Core.DataAccess
             return queryable;
         }
 
+        public TEntity Get(Expression<Func<TEntity, bool>>? predicate,
+            bool enableTracking = true)
+        {
+            IQueryable<TEntity> queryable = Query();
+            if (!enableTracking)
+                queryable = queryable.AsNoTracking();
+
+            return queryable.FirstOrDefault(predicate);
+        }
+
         public TEntity Add(TEntity entity)
         {
             _context.Set<TEntity>().Add(entity);
